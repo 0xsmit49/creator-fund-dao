@@ -11,10 +11,19 @@ import Footer from '../components/Footer';
 
 import FeaturesSection from '../components/Features';
 import HeroSection from '../components/Hero';
+import { getDefaultConfig, TomoEVMKitProvider } from '@tomo-inc/tomo-evm-kit';
+import { WagmiProvider } from 'wagmi';
+import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
-import { OnchainKitProvider } from '@coinbase/onchainkit';
 
-
+const config = getDefaultConfig({
+  clientId: process.env.TOMO_CLIENT_ID!,
+  appName: process.env.APP_NAME!,
+  projectId: process.env.PROJECT_ID!,
+  chains: [mainnet, polygon, optimism, arbitrum, base],
+  ssr: true,
+});
 
 
 export default function Page() {
@@ -22,7 +31,9 @@ export default function Page() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
-        <OnchainKitProvider apiKey="HtKBr6ZPPcdHN6plf9qm4G3TAuQtV7Kf" chain={base}>
+         <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <TomoEVMKitProvider>
       {/* Animated Background */}
       <div className="absolute inset-0 z-0">
         {/* Gradient Orbs */}
@@ -123,7 +134,9 @@ export default function Page() {
           animation: glow 2s ease-in-out infinite;
         }
       `}</style>
-      </OnchainKitProvider>
+     </TomoEVMKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
     </div>
   );
 }
